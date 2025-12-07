@@ -1,0 +1,5 @@
+# This file was automatically generated
+name: motherduck_test
+type: motherduck
+options:
+  database: my_db

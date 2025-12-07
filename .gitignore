@@ -13,3 +13,4 @@ env/
 **/*.duckdb.wal
 
 .env
+connection.options.yaml

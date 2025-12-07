@@ -481,16 +481,15 @@ https://docs.evidence.dev/deployment/self-host/github-pages/
 
 https://docs.evidence.dev/install-evidence
 
-Other Options
-Command Line
-With dbt
-Codespaces
+https://evidence.dev/blog/motherduck-connector
 
 ```
 npx degit evidence-dev/template reports
 npm --prefix ./reports install
+npm --prefix ./reports install @evidence-dev/motherduck@latest
 npm --prefix ./reports run sources
 npm --prefix ./reports run dev
+
 ```
 You can install Evidence inside your dbt project, inside a folder called reports, to create a monorepo.
 

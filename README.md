@@ -501,4 +501,5 @@ This currently needs to be done from the terminal, rather than from the dbt Clou
 
 ```
 cp .env.example .env
+set -a; source .env; set +a
 ```

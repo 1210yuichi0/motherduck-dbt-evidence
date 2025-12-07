@@ -6,27 +6,27 @@ sources:
 
 ## フィルター
 
-```sql categories
-select distinct category
+```sql statuses
+select distinct status
 from orders
-order by category
+order by status
 ```
 
 ```sql years
-select distinct date_part('year', order_datetime) as year
+select distinct date_part('year', order_date) as year
 from orders
 order by year desc
 ```
 
-<Dropdown data={categories} name=category value=category>
-    <DropdownOption value="%" valueLabel="すべてのカテゴリ"/>
+<Dropdown data={statuses} name=status value=status>
+    <DropdownOption value="%" valueLabel="すべてのステータス"/>
 </Dropdown>
 
 <Dropdown data={years} name=year value=year>
     <DropdownOption value="%" valueLabel="すべての年"/>
 </Dropdown>
 
-<ButtonGroup name=sales_range>
+<ButtonGroup name=amount_range>
     <ButtonGroupItem valueLabel="すべて" value="%" default/>
     <ButtonGroupItem valueLabel="$50未満" value="low"/>
     <ButtonGroupItem valueLabel="$50-$200" value="medium"/>
@@ -37,16 +37,16 @@ order by year desc
 
 ```sql order_summary
 select
-    count(distinct id) as total_orders,
-    round(avg(sales), 2) as avg_order_value,
-    round(sum(sales), 2) as total_revenue
+    count(distinct order_id) as total_orders,
+    round(avg(amount), 2) as avg_order_value,
+    round(sum(amount), 2) as total_revenue
 from orders
-where category like '${inputs.category.value}'
-and date_part('year', order_datetime)::text like '${inputs.year.value}'
+where status like '${inputs.status.value}'
+and date_part('year', order_date)::text like '${inputs.year.value}'
 and case
-    when '${inputs.sales_range}' = 'low' then sales < 50
-    when '${inputs.sales_range}' = 'medium' then sales between 50 and 200
-    when '${inputs.sales_range}' = 'high' then sales > 200
+    when '${inputs.amount_range}' = 'low' then amount < 50
+    when '${inputs.amount_range}' = 'medium' then amount between 50 and 200
+    when '${inputs.amount_range}' = 'high' then amount > 200
     else true
 end
 ```
@@ -73,45 +73,45 @@ end
     fmt=usd2
 />
 
-## カテゴリ別売上
+## ステータス別売上
 
-```sql category_sales
+```sql status_sales
 select
-    category,
+    status,
     count(*) as order_count,
-    round(sum(sales), 2) as total_sales
+    round(sum(amount), 2) as total_sales
 from orders
-where date_part('year', order_datetime)::text like '${inputs.year.value}'
+where date_part('year', order_date)::text like '${inputs.year.value}'
 and case
-    when '${inputs.sales_range}' = 'low' then sales < 50
-    when '${inputs.sales_range}' = 'medium' then sales between 50 and 200
-    when '${inputs.sales_range}' = 'high' then sales > 200
+    when '${inputs.amount_range}' = 'low' then amount < 50
+    when '${inputs.amount_range}' = 'medium' then amount between 50 and 200
+    when '${inputs.amount_range}' = 'high' then amount > 200
     else true
 end
-group by category
+group by status
 order by total_sales desc
 ```
 
 <BarChart
-    data={category_sales}
-    x=category
+    data={status_sales}
+    x=status
     y=total_sales
-    title="カテゴリ別売上 ({inputs.year.label})"
+    title="ステータス別売上 ({inputs.year.label})"
     swapXY=true
 />
 
-<DataTable data={category_sales} />
+<DataTable data={status_sales} />
 
 ## 月別トレンド
 
 ```sql monthly_trend
 select
-    date_trunc('month', order_datetime) as month,
+    date_trunc('month', order_date) as month,
     count(*) as order_count,
-    round(sum(sales), 2) as revenue
+    round(sum(amount), 2) as revenue
 from orders
-where category like '${inputs.category.value}'
-and date_part('year', order_datetime)::text like '${inputs.year.value}'
+where status like '${inputs.status.value}'
+and date_part('year', order_date)::text like '${inputs.year.value}'
 group by 1
 order by 1
 ```
@@ -120,34 +120,34 @@ order by 1
     data={monthly_trend}
     x=month
     y=revenue
-    title="月別売上推移 - {inputs.category.label}"
+    title="月別売上推移 - {inputs.status.label}"
 />
 
 <LineChart
     data={monthly_trend}
     x=month
     y=order_count
-    title="月別注文数 - {inputs.category.label}"
+    title="月別注文数 - {inputs.status.label}"
 />
 
 ## 最近の注文 (TOP 50)
 
 ```sql recent_orders
 select
-    id,
-    order_datetime,
-    category,
-    round(sales, 2) as sales
+    order_id,
+    order_date,
+    status,
+    round(amount, 2) as amount
 from orders
-where category like '${inputs.category.value}'
-and date_part('year', order_datetime)::text like '${inputs.year.value}'
+where status like '${inputs.status.value}'
+and date_part('year', order_date)::text like '${inputs.year.value}'
 and case
-    when '${inputs.sales_range}' = 'low' then sales < 50
-    when '${inputs.sales_range}' = 'medium' then sales between 50 and 200
-    when '${inputs.sales_range}' = 'high' then sales > 200
+    when '${inputs.amount_range}' = 'low' then amount < 50
+    when '${inputs.amount_range}' = 'medium' then amount between 50 and 200
+    when '${inputs.amount_range}' = 'high' then amount > 200
     else true
 end
-order by order_datetime desc
+order by order_date desc
 limit 50
 ```
 
@@ -155,25 +155,25 @@ limit 50
 
 ## 注文額別分布
 
-```sql sales_distribution
+```sql amount_distribution
 select
     case
-        when sales < 20 then '< $20'
-        when sales < 50 then '$20 - $50'
-        when sales < 100 then '$50 - $100'
-        when sales < 200 then '$100 - $200'
+        when amount < 20 then '< $20'
+        when amount < 50 then '$20 - $50'
+        when amount < 100 then '$50 - $100'
+        when amount < 200 then '$100 - $200'
         else '$200+'
     end as value_bucket,
     count(*) as order_count
 from orders
-where category like '${inputs.category.value}'
-and date_part('year', order_datetime)::text like '${inputs.year.value}'
+where status like '${inputs.status.value}'
+and date_part('year', order_date)::text like '${inputs.year.value}'
 group by 1
 order by 1
 ```
 
 <BarChart
-    data={sales_distribution}
+    data={amount_distribution}
     x=value_bucket
     y=order_count
     title="注文額帯別分布"

@@ -1,6 +1,6 @@
 ---
 sources:
-  - motherduck
+  - motherduck_test
 ---
 # 📊 注文分析ダッシュボード
 

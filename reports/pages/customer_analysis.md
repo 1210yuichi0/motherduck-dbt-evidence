@@ -1,6 +1,6 @@
 ---
 sources:
-  - motherduck
+  - motherduck_test
 ---
 # 👥 顧客分析ダッシュボード
 

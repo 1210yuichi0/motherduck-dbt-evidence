@@ -44,8 +44,8 @@ jobs:
       - name: Build Evidence
         run: npm run build
         env:
-          # MotherDuckトークンを環境変数として設定
-          EVIDENCE_SOURCE__motherduck__token: ${{ secrets.MOTHERDUCK_TOKEN }}
+          # MotherDuckトークンを環境変数として設定 (ソース名: motherduck_test)
+          EVIDENCE_SOURCE__motherduck_test__token: ${{ secrets.MOTHERDUCK_TOKEN }}
           # 他のデータソース認証情報もここに追加
           # EVIDENCE_SOURCE__[source_name]__[option_name]: ${{ secrets.SECRET_NAME }}
 

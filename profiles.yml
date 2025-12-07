@@ -1,0 +1,8 @@
+jaffle_shop:
+
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "md:?motherduck_token={{env_var('MOTHERDUCK_TOKEN')}}"
+      threads: 4

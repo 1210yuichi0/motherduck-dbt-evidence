@@ -49,13 +49,16 @@ jobs:
           # 他のデータソース認証情報もここに追加
           # EVIDENCE_SOURCE__[source_name]__[option_name]: ${{ secrets.SECRET_NAME }}
 
+      - name: Add .nojekyll file
+        run: touch build/motherduck-dbt-evidence/.nojekyll
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './reports/build'
+          path: './reports/build/motherduck-dbt-evidence'
 
   deploy:
     environment:
